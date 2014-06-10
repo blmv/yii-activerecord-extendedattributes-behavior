@@ -12,6 +12,6 @@
         }
     ],
     "autoload": {
-        "files": ["EActiveRecordExtendedAttributesBehavior.php"]
+        "classmap": ["EActiveRecordExtendedAttributesBehavior.php"]
     }
 }
