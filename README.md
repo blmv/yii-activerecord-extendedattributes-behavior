@@ -1,0 +1,2 @@
+yii-activerecord-extendedattributes-behavior
+============================================
