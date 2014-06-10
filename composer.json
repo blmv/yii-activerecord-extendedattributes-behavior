@@ -1,5 +1,5 @@
 {
-    "name": "yiiext/activerecord-extendedattributes-behavior",
+    "name": "blmv/yii-activerecord-extendedattributes-behavior",
     "description": "Easy setting/getting CActiveRecord attributes/properties/relations.",
     "keywords": ["yii", "extension", "active-record"],
     "homepage": "https://github.com/blmv/yii-activerecord-extendedattributes-behavior",
