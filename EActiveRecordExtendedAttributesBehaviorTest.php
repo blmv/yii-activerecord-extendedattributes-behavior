@@ -103,6 +103,20 @@ class EActiveRecordExtendedAttributesBehaviorTest extends \CTestCase {
 
 		$this->assertEqualsActiveRecordArrays($exAttrs, $john->getExtendedAttributes(array_keys($exAttrs)));
 	}
+	public function testSetExtendedAttributesRelationBelongsToSet() {
+		$john = $this->getUser();
+		$post = $this->getPost($john);
+		$jane = $this->getUser();
+
+		$this->assertEqualsActiveRecords($post->author, $john);
+
+		$post->setExtendedAttributes(array('author' => $jane));
+		$this->assertEquals($post->author_id, $jane->id);
+		$post->refresh();
+
+		//check that post is not saved
+		$this->assertEqualsActiveRecords($post->author, $john);
+	}
 
 	public function testSetExtendedAttributesRelationManySet() {
 		$john = $this->getUser();

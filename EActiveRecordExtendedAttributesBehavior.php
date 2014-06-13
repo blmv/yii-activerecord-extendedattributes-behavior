@@ -20,6 +20,8 @@ class EActiveRecordExtendedAttributesBehavior extends CActiveRecordBehavior {
 		$r = $this->owner->r($relation);
 		switch (get_class($r)) {
 			case 'EActiveRecordExtendedAttributesBelongsToRelationHelper':
+				$r->setRelatedFields($value);
+				break;
 			case 'EActiveRecordExtendedAttributesHasOneRelationHelper':
 				$r->set($value);
 				break;
@@ -41,6 +43,8 @@ class EActiveRecordExtendedAttributesBehavior extends CActiveRecordBehavior {
 	 * Set class properties, table attributes, attributes with setters and related records. Related records could be applied in 2 ways%
 	 *	- EActiveRecordExtendedAttributesBehavior::RELATION_MODE_ADD adding related records
 	 *	- EActiveRecordExtendedAttributesBehavior::RELATION_MODE_SET adding related records and removing records not presented in supplied set
+	 * BELONGS_TO relation only setting owner's attributes and does not save record.
+	 *
 	 *
 	 * WARNING: Existing records will be deleted from database if it is not presented in new set:
 	 *	- existing record for BELONGS_TO, HAS_ONE relation;
@@ -227,7 +231,9 @@ class EActiveRecordExtendedAttributesHasManyRelationHelper extends EActiveRecord
 		$pks = array();
 		$records = array_map(function($r) use ($relationModel, &$pks) {
 			if (is_object($r)) {
-				$pks[] = $r->primaryKey;
+				if (!$r->getIsNewRecord()) {
+					$pks[] = $r->primaryKey;
+				}
 			} else {
 				$pks[] = $r;
 				$r = $relationModel->findByPk($r);
@@ -271,9 +277,9 @@ class EActiveRecordExtendedAttributesHasManyRelationHelper extends EActiveRecord
 		$success = true;
 		$this->owner->$relationName = array();
 		foreach ($records as $record) {
-			if ($record->getAttributes($fields) !== $newRelatedFieldValues) {
+			if ($record->getAttributes($fields) !== $newRelatedFieldValues || $record->getIsNewRecord()) {
 				$record->attributes = $newRelatedFieldValues;
-				$success &= $record->update($fields);
+				$success &= $record->getIsNewRecord() ? $record->save() : $record->update($fields);
 			}
 			$this->owner->addRelatedRecord($relationName, $record, true);
 		}
