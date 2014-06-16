@@ -20,7 +20,7 @@ class EActiveRecordExtendedAttributesBehavior extends CActiveRecordBehavior {
 		$r = $this->owner->r($relation);
 		switch (get_class($r)) {
 			case 'EActiveRecordExtendedAttributesBelongsToRelationHelper':
-				$r->setRelatedFields($value);
+				$r->setRelatedAttributes($value);
 				break;
 			case 'EActiveRecordExtendedAttributesHasOneRelationHelper':
 				$r->set($value);
@@ -149,7 +149,7 @@ trait EActiveRecordExtendedAttributesBehaviorHasRelationTrait {
 class EActiveRecordExtendedAttributesHasOneRelationHelper extends EActiveRecordExtendedAttributesRelationHelper {
 	use EActiveRecordExtendedAttributesBehaviorHasRelationTrait;
 
-	public function setRelatedFields(CActiveRecord $record) {
+	public function setRelatedAttributes(CActiveRecord $record) {
 		$map = $this->getForeignKeyFieldsMap();
 		foreach ($map as $relatedField => $ownerField) {
 			$record->$relatedField = $this->owner->$ownerField;
@@ -164,7 +164,7 @@ class EActiveRecordExtendedAttributesHasOneRelationHelper extends EActiveRecordE
 	 * @return void
 	 */
 	public function set(CActiveRecord $record = null) {
-		$this->setRelatedFields($record);
+		$this->setRelatedAttributes($record);
 
 		if (($oldRecord = $this->owner->{$this->relation->name}()) && ($oldRecord->id != $record->id)) {
 			if (!$r = $oldRecord->delete()) {
@@ -210,7 +210,7 @@ class EActiveRecordExtendedAttributesHasManyRelationHelper extends EActiveRecord
 	 * @access public
 	 * @return void
 	 */
-	public function setRelatedFields(CActiveRecord $record) {
+	public function setRelatedAttributes(CActiveRecord $record) {
 		$map = $this->getForeignKeyFieldsMap();
 		foreach ($map as $relatedField => $ownerField) {
 			$record->$relatedField = $this->owner->$ownerField;
@@ -295,7 +295,7 @@ class EActiveRecordExtendedAttributesHasManyRelationHelper extends EActiveRecord
 	 * @return bool
 	 */
 	public function add(CActiveRecord $record, $index = null) {
-		$this->setRelatedFields($record);
+		$this->setRelatedAttributes($record);
 		$this->owner->addRelatedRecord($this->relation->name, $record, $index ? $index : true);
 		return $record->getIsNewRecord() ? $record->save() : $record->update(array_keys($this->getForeignKeyFieldsMap()));
 	}
@@ -368,7 +368,7 @@ class EActiveRecordExtendedAttributesBelongsToRelationHelper extends EActiveReco
 	 * @access public
 	 * @return void
 	 */
-	public function setRelatedFields(CActiveRecord $record = null) {
+	public function setRelatedAttributes(CActiveRecord $record = null) {
 		$map = $this->getForeignKeyFieldsMap();
 		foreach ($map as $ownerField => $relatedField) {
 			$this->owner->$ownerField = $record ? $record->$relatedField : null;
@@ -386,7 +386,7 @@ class EActiveRecordExtendedAttributesBelongsToRelationHelper extends EActiveReco
 		if ($record && $record->getIsNewRecord()) {
 			throw new CDbException('Could not set belongs to relation to new record');
 		}
-		$this->setRelatedFields($record);
+		$this->setRelatedAttributes($record);
 
 		$r = $this->owner->getIsNewRecord() ? $this->owner->save() : $this->owner->update(array_keys($this->getForeignKeyFieldsMap()));
 
