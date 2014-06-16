@@ -9,24 +9,29 @@
 class EActiveRecordExtendedAttributesBehavior extends CActiveRecordBehavior {
 	const RELATION_MODE_SET = 'set';
 	const RELATION_MODE_ADD = 'add';
+	const HAS_MANY = 'EActiveRecordExtendedAttributesHasManyRelationHelper';
+	const HAS_ONE = 'EActiveRecordExtendedAttributesHasOneRelationHelper';
+	const MANY_MANY = 'EActiveRecordExtendedAttributesManyToManyRelationHelper';
+	const BELONGS_TO = 'EActiveRecordExtendedAttributesBelongsToRelationHelper';
+
 	static protected $relationMap = array(
-		CActiveRecord::HAS_MANY => 'EActiveRecordExtendedAttributesHasManyRelationHelper',
-		CActiveRecord::HAS_ONE => 'EActiveRecordExtendedAttributesHasOneRelationHelper',
-		CActiveRecord::MANY_MANY => 'EActiveRecordExtendedAttributesManyToManyRelationHelper',
-		CActiveRecord::BELONGS_TO => 'EActiveRecordExtendedAttributesBelongsToRelationHelper',
+		CActiveRecord::HAS_MANY => self::HAS_MANY,
+		CActiveRecord::HAS_ONE => self::HAS_ONE,
+		CActiveRecord::MANY_MANY => self::MANY_MANY,
+		CActiveRecord::BELONGS_TO => self::BELONGS_TO,
 	);
 
 	protected function setRelatedRecords($relation, $value, $mode) {
 		$r = $this->owner->r($relation);
 		switch (get_class($r)) {
-			case 'EActiveRecordExtendedAttributesBelongsToRelationHelper':
+			case self::BELONGS_TO:
 				$r->setRelatedAttributes($value);
 				break;
-			case 'EActiveRecordExtendedAttributesHasOneRelationHelper':
+			case self::HAS_ONE:
 				$r->set($value);
 				break;
-			case 'EActiveRecordExtendedAttributesManyToManyRelationHelper':
-			case 'EActiveRecordExtendedAttributesHasManyRelationHelper':
+			case self::MANY_MANY:
+			case self::HAS_MANY:
 				if ($mode === self::RELATION_MODE_ADD && is_array($value)) {
 					foreach ($value as $v) {
 						$r->add($v);
