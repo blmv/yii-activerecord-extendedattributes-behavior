@@ -154,10 +154,23 @@ trait EActiveRecordExtendedAttributesBehaviorHasRelationTrait {
 class EActiveRecordExtendedAttributesHasOneRelationHelper extends EActiveRecordExtendedAttributesRelationHelper {
 	use EActiveRecordExtendedAttributesBehaviorHasRelationTrait;
 
+	/**
+	 * Returns related model attribute values that linked it to owner
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function getRelatedAttributeValues() {
+		$attrs = array();
+		foreach ($this->getForeignKeyFieldsMap() as $relatedField => $ownerField) {
+			$attrs[$relatedField] = $this->owner->$ownerField;
+		}
+		return $attrs;
+	}
+
 	public function setRelatedAttributes(CActiveRecord $record) {
-		$map = $this->getForeignKeyFieldsMap();
-		foreach ($map as $relatedField => $ownerField) {
-			$record->$relatedField = $this->owner->$ownerField;
+		foreach ($this->getRelatedAttributeValues() as $attr => $value) {
+			$record->$attr = $value;
 		}
 	}
 
@@ -208,6 +221,14 @@ class EActiveRecordExtendedAttributesHasManyRelationHelper extends EActiveRecord
 		return $crit;
 	}
 
+	public function getRelatedAttributeValues() {
+		$attrs = [];
+		foreach ($this->getForeignKeyFieldsMap() as $relatedField => $ownerField) {
+			$attrs[$relatedField] = $this->owner->$ownerField;
+		}
+		return $attrs;
+	}
+
 	/**
 	 * Set attributes for $record to make it related to owner.
 	 *
@@ -216,9 +237,8 @@ class EActiveRecordExtendedAttributesHasManyRelationHelper extends EActiveRecord
 	 * @return void
 	 */
 	public function setRelatedAttributes(CActiveRecord $record) {
-		$map = $this->getForeignKeyFieldsMap();
-		foreach ($map as $relatedField => $ownerField) {
-			$record->$relatedField = $this->owner->$ownerField;
+		foreach ($this->getRelatedAttributeValues() as $attr => $value) {
+			$record->$attr = $value;
 		}
 	}
 
