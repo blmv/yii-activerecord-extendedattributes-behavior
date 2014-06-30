@@ -297,7 +297,7 @@ class EActiveRecordExtendedAttributesHasManyRelationHelper extends EActiveRecord
 			$relationModel->deleteAll($deleteCriteria);
 		}
 
-		$newRelatedFieldValues = $this->owner->getAttributes($map);
+		$newRelatedFieldValues = array_combine($fields, $this->owner->getAttributes($map));
 
 		$success = true;
 		$this->owner->$relationName = array();
