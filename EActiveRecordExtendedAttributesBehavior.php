@@ -301,7 +301,7 @@ class EActiveRecordExtendedAttributesHasManyRelationHelper extends EActiveRecord
 		$this->owner->$relationName = array();
 		foreach ($records as $record) {
 			if ($record->getAttributes($fields) !== $newRelatedFieldValues || $record->getIsNewRecord()) {
-				$record->attributes = $newRelatedFieldValues;
+				$record->setAttributes($newRelatedFieldValues, false);
 				$success &= $record->getIsNewRecord() ? $record->save() : $record->update($fields);
 			}
 			$this->owner->addRelatedRecord($relationName, $record, true);
